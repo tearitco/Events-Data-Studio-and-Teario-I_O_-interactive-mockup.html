@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Events, Data Studio and Teario I/O: interactive mockup</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Nunito:wght@400;600;700&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#C9A66B;--note:#FFFDF2;--ink:#2B1F3F;--muted:#5B4B73;--mint:#A8E6CF;--yellow:#FFE45E;--pink:#FF9EB5;--sky:#7EC8E3;--violet:#4A2C7A;--shadow:rgba(60,40,10,.28);--code:#F1EBD8;--grid:#e6dcc3;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2A2118;--note:#33293F;--ink:#F4EEDD;--muted:#CBBFE0;--shadow:rgba(0,0,0,.5);--code:#241C33;--grid:#41365a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#2A2118;--note:#33293F;--ink:#F4EEDD;--muted:#CBBFE0;--shadow:rgba(0,0,0,.5);--code:#241C33;--grid:#41365a;color-scheme:dark}
+html{height:100%}*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Nunito","Segoe UI",system-ui,sans-serif}
+.page{max-width:900px;margin:0 auto;padding:24px 16px 56px}
+h1,h2,h3{font-family:"Patrick Hand","Comic Sans MS",cursive;font-weight:400;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,3.2rem)}h2{font-size:1.6rem;margin:0 0 8px}h3{font-size:1.2rem;margin:0 0 4px}
+p{margin:0 0 10px}.muted{color:var(--muted)}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.b{font-size:.85rem;padding:2px 9px;border-radius:3px;background:var(--note);box-shadow:0 2px 5px var(--shadow)}
+.b.fact{border-left:6px solid var(--mint)}.b.plan{border-left:6px solid var(--sky)}.b.mock{border-left:6px solid var(--yellow)}.b.idea{border-left:6px solid var(--pink)}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+button{font:600 .95rem "Nunito",sans-serif;background:var(--note);color:var(--ink);border:2px solid var(--ink);border-radius:4px;padding:7px 13px;cursor:pointer}
+button[aria-selected="true"],button.on{background:var(--yellow);color:#2B1F3F}
+button:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.note{position:relative;background:var(--note);padding:20px 16px 14px;margin:20px 0;box-shadow:0 6px 14px var(--shadow);border-radius:3px}
+.note::before{content:"";position:absolute;top:-10px;left:50%;width:84px;height:22px;transform:translateX(-50%) rotate(-2deg);background:var(--tape,var(--yellow));opacity:.92;border-radius:2px}
+.note.mint{--tape:var(--mint)}.note.sky{--tape:var(--sky)}.note.pink{--tape:var(--pink)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}.flow div{flex:1 1 130px;background:var(--code);padding:8px;border-radius:3px;text-align:center;font-size:.9rem}
+.flow span{align-self:center}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.tile{background:var(--code);padding:10px;border-radius:3px}.tile b{display:block;font:400 1.8rem "Patrick Hand",cursive}
+.bar{height:16px;background:var(--code);border-radius:3px;overflow:hidden;margin:3px 0}.bar i{display:block;height:100%;background:var(--sky)}
+.bars .l{display:flex;justify-content:space-between;font-size:.85rem}
+svg text{fill:var(--ink);font:11px "Nunito",sans-serif}
+pre{background:var(--code);padding:10px;border-radius:3px;overflow:auto;font:400 .82rem/1.5 ui-monospace,Menlo,Consolas,monospace;max-height:230px;margin:6px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{text-align:left;padding:5px 8px;border-bottom:1px dashed var(--muted)}th{cursor:pointer}
+.scroll{overflow-x:auto}canvas{max-width:100%;height:auto;border:2px solid var(--ink);border-radius:3px;background:#f3e7c6}
+.ok{color:#1b7a4b}.bad{color:#c0264d;font-weight:700}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ok{color:#8be0b5}:root:not([data-theme="light"]) .bad{color:#ff9eb5}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.card{background:var(--code);padding:10px 12px;border-radius:3px}
+.chip{font-size:.78rem;padding:1px 7px;border-radius:9px;border:1px solid var(--muted);margin-right:4px;display:inline-block}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main class="page">
+<h1>🎛️ Events · 📊 Data Studio · 🏃 Teario I/O</h1>
+<p class="muted">An interactive mockup of the plans from 2026-11-09, plus my take. Click things. 🧸</p>
+<div class="badges" aria-label="Labels">
+<span class="b fact">🟩 FACT = read in the repo docs</span><span class="b plan">🟦 PLAN = designed, nothing built</span>
+<span class="b mock">🟨 MOCK = made-up numbers to show the idea</span><span class="b idea">🟪 MY IDEA = my opinion</span></div>
+
+<div class="tabs" role="tablist" aria-label="Sections">
+<button role="tab" aria-selected="true" data-tab="ev">⚡ Events</button>
+<button role="tab" aria-selected="false" data-tab="ds">📊 Data Studio</button>
+<button role="tab" aria-selected="false" data-tab="tm">🏃 Teario I/O</button>
+<button role="tab" aria-selected="false" data-tab="my">💡 My take</button></div>
+
+<!-- EVENTS -->
+<section id="ev" role="tabpanel">
+<div class="note mint"><h2>⚡ How an event travels</h2>
+<div class="flow"><div>🧑 click / key<br><small>a person or pet</small></div><span>➜</span><div>📄 event page<br><small>how a mechanic is written</small></div><span>➜</span><div>🧮 interpreter<br><small>in memory, fast ones (PLAN)</small></div><span>➜</span><div>📒 ledger<br><small>inputs only</small></div><span>➜</span><div>🔁 replay<br><small>same inputs, same game</small></div></div>
+<p class="muted" style="margin-top:8px">🐢 Slow mechanics (clear a level, show a message, a door) stay real pages. 🐇 Fast ones (30 times a second) need the in-memory interpreter, the biggest new piece and the biggest risk.</p></div>
+
+<div class="note sky"><h3>🧮 Why a page can’t run every tick 🟩 FACT + 🟨 ESTIMATE</h3>
+<p>Measured: every page run launches several processes (sh, bash, prisc); 5 runs in 24 s used 4.5% of a core. I extrapolate linearly from that one number, so treat the result as a rough estimate.</p>
+<div class="row"><label>Ticks per second: <b id="tv">30</b><br><input id="t" type="range" min="1" max="60" value="30"></label>
+<label>Page runs per tick: <b id="pv">1</b><br><input id="p" type="range" min="0" max="3" value="1"></label></div>
+<div class="tiles"><div class="tile"><b id="rps">30</b>page runs / second</div><div class="tile"><b id="cores">6.5</b>cores (estimate)</div><div class="tile"><b id="verdict">🚫</b><span id="vtext">impossible</span></div></div>
+<div class="bar"><i id="cbar" style="width:100%"></i></div></div>
+
+<div class="note"><h3>🎯 Trigger kinds in the house’s event pages 🟩 FACT (counted 2026-11-09)</h3>
+<p class="muted">Bars use a square-root scale so the small ones stay visible. I did not read what <code>on</code>, <code>t</code>, <code>hi</code> and <code>re</code> mean.</p>
+<div class="bars" id="trig"></div></div>
+</section>
+
+<!-- DATA STUDIO -->
+<section id="ds" role="tabpanel" hidden>
+<div class="note sky"><h2>📊 Data Studio (data-hq) 🟦 PLAN · 🟨 MOCK data</h2>
+<p class="muted">Reads datasets, never writes game state. Every chart is a projection you can delete and regenerate. The numbers below are invented.</p>
+<div class="row"><b>Datasets:</b><label><input type="checkbox" class="gs" value="0" checked> 🎲 game-607</label><label><input type="checkbox" class="gs" value="1" checked> 🎲 game-612</label><label><input type="checkbox" class="gs" value="2"> 🎲 game-618</label>
+<span style="flex:1"></span><button class="on" id="mdash">🧩 dashboard</button><button id="mtab">🗒️ table</button></div>
+<div class="badges" id="roles"><span class="b">round → <b>time</b></span><span class="b">game → <b>category</b></span><span class="b">cash → <b>measure</b></span><span class="b">group → <b>category</b></span><span class="b">rent → <b>measure</b></span> <small class="muted">roles sniffed from the data, no schema file</small></div>
+<div id="dash"><div class="tiles" id="tiles"></div>
+<h3>📈 Cash by round, one line per game</h3><div class="scroll"><svg id="line" viewBox="0 0 560 220" width="100%" role="img" aria-label="Line chart of cash by round"></svg></div>
+<h3>🏘️ Rent collected by colour group</h3><div class="bars" id="rent"></div></div>
+<div id="tbl" hidden><div class="scroll"><table><thead><tr><th data-k="g">game ⇅</th><th data-k="r">round ⇅</th><th data-k="c">cash ⇅</th></tr></thead><tbody id="tb"></tbody></table></div><p class="muted">Every panel offers “open as table”, so a dynamic dashboard never hides the data.</p></div></div>
+
+<div class="note"><h3>🤖 The AI side: propose, then /apply 🟦 PLAN</h3>
+<p>The model may only emit whitelisted cells (chart, stat, SELECT-only query, text). Nothing joins the notebook until you say so. Private rows never enter its context.</p>
+<button id="prop">🪄 propose a cell</button>
+<div id="pbox" hidden><pre>CELL | c7 | chart | line | x=round | y=cash | group=game</pre><button id="apply">✅ /apply</button> <button id="no">❌ /no</button></div>
+<p id="pmsg" class="muted"></p></div>
+</section>
+
+<!-- TEARIO -->
+<section id="tm" role="tabpanel" hidden>
+<div class="note mint"><h2>🏃 Teario: the ledger holds inputs only 🟦 PLAN · 🟨 MOCK sim</h2>
+<p>Press Start, then steer: ◀ ▶ ⏸ ⤒. Each <i>change</i> becomes one row; ticks never do. Then replay from the rows, and try tampering with one. (Illustrative integer physics at a slow demo speed.)</p>
+<canvas id="cv" width="480" height="192" aria-label="Demo platformer"></canvas>
+<div class="row" style="margin-top:8px"><button id="st">▶️ Start</button><button data-d="left">◀ left</button><button data-d="right">▶ right</button><button data-d="stay">⏸ stay</button><button data-d="jump">⤒ jump</button><button id="rp">🔁 Replay</button><button id="tp">🧨 Tamper + replay</button></div>
+<p id="tmsg" class="muted">Reach the 🚩 on the right; jump the wall.</p><pre id="led">(no rows yet)</pre></div>
+
+<div class="note sky"><h3>🚪 Doors inside doors: depth limit 2 🟦 PLAN</h3>
+<p>Each nested run has its own ledger, linked to its parent by ENTER and RETURN rows. A third door is refused, and a draft that points back at itself is refused too.</p>
+<div class="row"><button id="en">🚪 enter a door</button><button id="rt">↩️ return</button><button id="cy">🌀 enter a level that loops to itself</button></div>
+<p>Depth: <b id="dp">0</b> <span id="dm" class="muted"></span></p><pre id="dl"></pre></div>
+</section>
+
+<!-- MY TAKE -->
+<section id="my" role="tabpanel" hidden>
+<div class="note pink"><h2>💡 My take 🟪 MY IDEAS</h2><p class="muted">Filter, and read effort (S/M/L) against impact.</p>
+<div class="row" id="flt"><button class="on" data-f="all">all</button><button data-f="Events">⚡ events</button><button data-f="Data">📊 data</button><button data-f="Teario">🏃 teario</button><button data-f="Process">🧯 process</button></div>
+<div class="cards" id="cards" style="margin-top:12px"></div></div>
+<div class="note"><h3>🚧 Concerns</h3><ul>
+<li>📚 Five new plans in one day; only the generator is built.</li><li>🐾 None of them touches the pet loop (empty bank, walk direction, can vs does).</li>
+<li>⚙️ Teario needs a new in-process interpreter at 30 ticks a second on a weak machine, and no key-release signal was found.</li>
+<li>🏷️ Name drift: Teropoly, Deskopoly, Teario (the last is also too close to the plumber game).</li><li>🖼️ How a window shows a chart is unverified.</li></ul></div>
+<div class="note mint"><h3>🧭 Order I would pick</h3><ol><li>🐾 Fix the pet bank and decide the walk direction.</li><li>🎲 Chutes and Ladders through the generator (also tests the unverified Books dropdown).</li><li>📊 data-hq P0 and P1, so paired-seed results become charts.</li><li>🏃 Teario M0 spikes only.</li><li>🐍 Snake as the first honest learning demo.</li></ol></div>
+</section>
+<p class="muted">Nothing here is built except the generator. Numbers marked MOCK are invented.</p>
+</main>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)},$$=function(s){return [].slice.call(document.querySelectorAll(s))};
+/* tabs */
+$$('[data-tab]').forEach(function(b){b.addEventListener('click',function(){
+$$('[data-tab]').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+['ev','ds','tm','my'].forEach(function(i){$('#'+i).hidden=(i!==b.dataset.tab)})})});
+/* events calc */
+function calc(){var t=+$('#t').value,p=+$('#p').value,r=t*p,c=r*0.216;
+$('#tv').textContent=t;$('#pv').textContent=p;$('#rps').textContent=r;$('#cores').textContent=c.toFixed(2);
+$('#cbar').style.width=Math.min(100,c*100)+'%';
+var v=c<0.05?['✅','fine']:c<0.5?['⚠️','heavy']:c<1?['🔥','too hot']:['🚫','impossible'];
+$('#verdict').textContent=v[0];$('#vtext').textContent=v[1]}
+$('#t').oninput=calc;$('#p').oninput=calc;calc();
+var tr=[['on',4915],['t',432],['hi',217],['re',216],['ui',198],['parallel',76],['clock',50],['event',4],['action',2]];
+$('#trig').innerHTML=tr.map(function(a){return '<div class="l"><span>'+a[0]+'</span><span>'+a[1]+'</span></div><div class="bar"><i style="width:'+(Math.sqrt(a[1])/Math.sqrt(4915)*100)+'%"></i></div>'}).join('');
+/* data studio mock */
+function rng(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+var G=[607,612,618].map(function(sd,i){var r=rng(sd),c=1500,cash=[];for(var k=0;k<30;k++){c+=Math.round(r()*220-90);cash.push(c)}
+var rent=['Brown','Sky','Pink','Orange','Red','Yellow','Green','Blue'].map(function(n){return [n,Math.round(r()*900)]});return {id:'game-'+sd,cash:cash,rent:rent}});
+var COL=['#4A2C7A','#d6336c','#1b7a4b'],mode='dash',sk='r',sd=1;
+function sel(){return $$('.gs').filter(function(x){return x.checked}).map(function(x){return +x.value})}
+function draw(){var s=sel();
+$('#tiles').innerHTML='<div class="tile"><b>'+s.length+'</b>games</div><div class="tile"><b>'+s.length*30+'</b>rounds</div><div class="tile"><b>'+(s.length?Math.max.apply(null,s.map(function(i){return Math.max.apply(null,G[i].cash)})):0)+'</b>peak cash</div>';
+var all=[].concat.apply([],s.map(function(i){return G[i].cash})),mn=all.length?Math.min.apply(null,all):0,mx=all.length?Math.max.apply(null,all):1,sv='<line x1="40" y1="190" x2="550" y2="190" stroke="currentColor"/>';
+sv+='<text x="2" y="14">'+mx+'</text><text x="2" y="190">'+mn+'</text><text x="250" y="212">round →</text>';
+s.forEach(function(i,n){var d=G[i].cash.map(function(v,k){return (k?'L':'M')+(40+k*17.6)+' '+(185-(v-mn)/(mx-mn||1)*165)}).join('');
+sv+='<path d="'+d+'" fill="none" stroke="'+COL[i]+'" stroke-width="2.5"/><text x="'+(60+n*100)+'" y="12" style="fill:'+COL[i]+'">● '+G[i].id+'</text>'});
+$('#line').innerHTML=s.length?sv:'<text x="200" y="110">no data</text>';
+var tot={};s.forEach(function(i){G[i].rent.forEach(function(a){tot[a[0]]=(tot[a[0]]||0)+a[1]})});var ks=Object.keys(tot),m=Math.max.apply(null,ks.map(function(k){return tot[k]}).concat([1]));
+$('#rent').innerHTML=ks.length?ks.map(function(k){return '<div class="l"><span>'+k+'</span><span>'+tot[k]+'</span></div><div class="bar"><i style="width:'+tot[k]/m*100+'%"></i></div>'}).join(''):'<p class="muted">no data</p>';
+var rows=[];s.forEach(function(i){G[i].cash.forEach(function(c,k){rows.push({g:G[i].id,r:k+1,c:c})})});
+rows.sort(function(a,b){var x=a[sk],y=b[sk];return (x>y?1:x<y?-1:0)*sd});
+$('#tb').innerHTML=rows.slice(0,14).map(function(o){return '<tr><td>'+o.g+'</td><td>'+o.r+'</td><td>'+o.c+'</td></tr>'}).join('')||'<tr><td colspan="3">no data</td></tr>'}
+$$('.gs').forEach(function(x){x.onchange=draw});
+$$('th[data-k]').forEach(function(h){h.onclick=function(){sd=sk===h.dataset.k?-sd:1;sk=h.dataset.k;draw()}});
+function setMode(m){$('#dash').hidden=m!=='d';$('#tbl').hidden=m==='d';$('#mdash').className=m==='d'?'on':'';$('#mtab').className=m==='d'?'':'on'}
+$('#mdash').onclick=function(){setMode('d')};$('#mtab').onclick=function(){setMode('t')};draw();
+$('#prop').onclick=function(){$('#pbox').hidden=false;$('#pmsg').textContent='Proposed. Nothing is added until you decide.'};
+$('#apply').onclick=function(){$('#pbox').hidden=true;$('#pmsg').textContent='✅ Added to the notebook (mock). The previous notebook is kept as a backup.'};
+$('#no').onclick=function(){$('#pbox').hidden=true;$('#pmsg').textContent='❌ Dropped. The notebook is byte-identical to before.'};
+/* Teario demo */
+var CW=24,W=20,cv=$('#cv'),cx=cv.getContext('2d'),S,rows,ck,tick,tm,run=false,dir0='stay';
+function hash(s,t){var h=2166136261,a=[s.x,s.y,s.vy,t];a.forEach(function(v){h^=(v+1000)&0xffff;h=Math.imul(h,16777619)>>>0});return h.toString(16)}
+function step(s,d,j){var on=s.y===6;var vy=s.vy;if(j&&on)vy=-3;else if(on)vy=0;
+var nx=s.x+(d==='left'?-1:d==='right'?1:0);nx=Math.max(0,Math.min(19,nx));if(nx===10&&s.y>=5)nx=s.x;
+var ny=s.y+vy;if(ny>=6){ny=6;vy=0}else vy=Math.min(vy+1,3);return {x:nx,y:ny,vy:vy}}
+function paint(){cx.clearRect(0,0,480,192);cx.fillStyle='#8a6a3a';cx.fillRect(0,7*CW,480,CW);cx.fillRect(10*CW,5*CW,CW,2*CW);
+cx.font='20px sans-serif';cx.fillText('🚩',19*CW,7*CW-4);cx.fillText('🐣',S.x*CW,S.y*CW+CW-3)}
+function reset(){S={x:0,y:6,vy:0};rows=[];ck=[];tick=0;dir0='stay';run=false;clearInterval(tm);paint();$('#led').textContent='(no rows yet)';$('#st').textContent='▶️ Start'}
+function show(note){var o=['EVENT|0|sys|new|teario-demo|0|level=sha:mock,seed=7'];rows.forEach(function(r){o.push('EVENT|'+r.t+'|p1|input|'+r.d+'|-|ok')});ck.forEach(function(c){o.push('EVENT|'+c.t+'|sys|ckpt|-|-|'+c.h)});$('#led').textContent=o.join('\n');if(note)$('#tmsg').textContent=note}
+function sim(R,verify){var s={x:0,y:6,vy:0},d='stay',end=tick,bad=null;for(var t=0;t<end;t++){var j=false;R.forEach(function(r){if(r.t===t){if(r.d==='jump')j=true;else d=r.d}});s=step(s,d,j);
+if(verify)ck.forEach(function(c){if(c.t===t+1&&hash(s,t+1)!==c.h&&!bad)bad=c.t})}return {s:s,bad:bad}}
+function endRun(m){run=false;clearInterval(tm);ck.push({t:tick,h:hash(S,tick)});$('#st').textContent='▶️ Start';show(m)}
+function go(){tick++;var j=rows.some(function(r){return r.t===tick-1&&r.d==='jump'});
+S=step(S,curDir,j);paint();if(tick%20===0)ck.push({t:tick,h:hash(S,tick)});if(S.x>=19)endRun('🏁 Cleared! Now replay it from the rows alone.');else if(tick>=150)endRun('⏱️ Time up. You can still replay.');else show()}
+var curDir='stay';
+$('#st').onclick=function(){if(run){endRun('Stopped.');return}reset();run=true;curDir='stay';$('#st').textContent='⏹️ Stop';tm=setInterval(go,130);$('#tmsg').textContent='Running… steer!'};
+$$('[data-d]').forEach(function(b){b.onclick=function(){if(!run)return;var d=b.dataset.d;rows.push({t:tick,d:d});if(d!=='jump')curDir=d;show()}});
+document.addEventListener('keydown',function(e){var m={ArrowLeft:'left',ArrowRight:'right',ArrowDown:'stay',ArrowUp:'jump'}[e.key];if(m&&run&&$('#tm').hidden===false){e.preventDefault();rows.push({t:tick,d:m});if(m!=='jump')curDir=m;show()}});
+function replay(R,label){if(!tick){$('#tmsg').textContent='Play a run first.';return}var r=sim(R,true);S=r.s;paint();
+$('#tmsg').innerHTML=r.bad?'<span class="bad">🚫 REFUSED: checkpoint hash differs at tick '+r.bad+' ('+label+').</span>':'<span class="ok">✅ '+label+': every checkpoint matched; same inputs, same game.</span>'}
+$('#rp').onclick=function(){if(run)return;replay(rows,'Replay')};
+$('#tp').onclick=function(){if(run||!tick)return replay(rows,'Replay');var R=rows.map(function(r){return {t:r.t,d:r.d}});
+var k=-1;R.forEach(function(r,i){if(k<0&&(r.d==='right'||r.d==='jump'))k=i});
+if(k>=0){R[k].t+=3;replay(R,'Tampered ledger')}else{ck[0]&&(ck[0].h='deadbeef');replay(rows,'Tampered ledger')}};
+reset();
+/* doors */
+var st=[],lv=0;function dm(msg){$('#dp').textContent=lv;$('#dm').textContent=msg||'';$('#dl').textContent=st.join('\n')||'(top level only)'}
+$('#en').onclick=function(){if(lv>=2){$('#dm').innerHTML='<span class="bad">🚫 refused: depth_limit=2. You stay here.</span>';return}lv++;st.push('ENTER|depth '+lv+'|ledger L'+lv+' linked to parent');dm('Only the top level ticks; parents are frozen.')};
+$('#rt').onclick=function(){if(!lv){dm('Already at the top.');return}st.push('RETURN|depth '+lv+' → '+(lv-1));lv--;dm()};
+$('#cy').onclick=function(){$('#dm').innerHTML='<span class="bad">🚫 refused: draft level points back at itself (cycle by name). Published levels point by content hash, so they can’t.</span>'};dm();
+/* my take */
+var I=[['🧪','Chutes: exact answer vs played games','Data','S','high','A Markov chain gives the exact expected length; compare it with played games. Same trick checks Deskopoly landing frequencies (Jail should top the list).'],
+['🔌','Free GAME | export in the generator','Data','S','high','Every generated game feeds the data studio with no extra work.'],
+['✅','Nothing publishes without a replay','Process','S','high','Levels, rulesets and chapters share one rule. It is also a brand line.'],
+['🐍','Snake as the first honest learning demo','Events','M','high','A clear score lets Laplace-weighted counts show real improvement across paired seeds.'],
+['🔬','Teario M0 spikes only','Teario','S','high','Learn held keys, picture rate and canvas clicks before committing.'],
+['🗺️','Landing heat map in the studio','Data','S','med','A free sanity check on movement, jail and card rules without the official sheet.'],
+['👻','Level postcards and ghost runs','Teario','M','med','A level hash plus its replay is shareable proof, and great content.'],
+['🧯','Vacuity guards everywhere','Process','S','high','Every pin must also assert the tested thing happened at least once.']];
+var f='all';function cards(){$('#cards').innerHTML=I.filter(function(i){return f==='all'||i[2]===f}).map(function(i){return '<div class="card"><h3>'+i[0]+' '+i[1]+'</h3><p>'+i[5]+'</p><span class="chip">'+i[2]+'</span><span class="chip">effort '+i[3]+'</span><span class="chip">impact '+i[4]+'</span></div>'}).join('')}
+$$('[data-f]').forEach(function(b){b.onclick=function(){f=b.dataset.f;$$('[data-f]').forEach(function(x){x.className=x===b?'on':''});cards()}});cards();
+})();
+</script>
+</body>
+</html>
